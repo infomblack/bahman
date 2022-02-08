@@ -1,7 +1,7 @@
-
-var url= "https://script.google.com/macros/s/AKfycbxv2oyTiAdPutylG4dI12JvDcDLnIjC02J8wfKdu3ZWh3V2YnZ3eYBMxHYmP8yadxWzTA/exec";  
+var url= "https://script.google.com/macros/s/AKfycbxWVTuR6Y47V2Oi6b2UrbPRsE2qFA6HPHmpQtYN93PIOQ_2KQv8MgZ2qafGUtQc5sYyEw/exec";  
 var withfetch=true;   
 var stop=true;
+var collect_Text=[];
  function preventFormSubmit(){
     var forms=document.querySelectorAll('form');
     for (var i=0;i<forms.length;i++){
@@ -54,7 +54,7 @@ function RetriveClick()
 
 function retrivedata()
 {
-
+collect_Text=[];
 var dealer_hcode=document.querySelector('[id="dealer_hcode"]');
 var confirmation_hcode=document.querySelector('[id="confirmation_hcode"]');
 var national_hcode=document.querySelector('[id="national_hcode"]');
@@ -189,13 +189,13 @@ function fillform(r)
       (r.gender=="true")?document.getElementById('gender_male').checked=true:document.getElementById('gender_female').checked=true;
       document.querySelectorAll('[value='+JSON.stringify(r.colorobj.color)+']')[0].checked=true;
 
-      (r.colorobj.colorb=="false") ? (document.getElementById('colorb-zero').checked=true):(document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colorb)+']')[1].checked=true);
+      (r.colorobj.colorb=="") ? (document.getElementById('colorb-zero').checked=true):(document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colorb)+']')[1].checked=true);
 
       if (r.carobj.car1!='')
       {
-      if (document.getElementById('flexSwitchCheckDefault').checked==false) document.getElementById('flexSwitchCheckDefault'),click();  
+      if (document.getElementById('flexSwitchCheckDefault').checked==false) document.getElementById('flexSwitchCheckDefault').click();  
       document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1)+']')[2].checked=true;
-      (r.colorobj.colors1b1=="false") ? (document.getElementById('colors1b1-zero').checked=true):document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1b1)+']')[3].checked=true;
+      (r.colorobj.colors1b1=="") ? (document.getElementById('colors1b1-zero').checked=true):document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1b1)+']')[3].checked=true;
       }
 
 }
@@ -304,6 +304,7 @@ fetch(url, {
 	            element.parentNode.removeChild(element);
               var element=document.getElementById("back");
 	            element.parentNode.removeChild(element);
+              saveStaticDataToFile();
             }
           else {
             window.scrollTo(0, 0);
@@ -336,6 +337,7 @@ function ActionClick()
 {
   var FORM = document.getElementById('myForm');
   if (FORM.checkValidity() === true) {
+      collect_Text=[];
       FORM.classList.add('was-validated');
       document.querySelector('[id="page"]').style.display='none'; 
       document.querySelector('[id="page-checkdata"]').style.display='block'; 
@@ -375,7 +377,7 @@ if (!withfetch)
               
 
               intalert('اطلاعات شما با موفقیت ثبت شد در صورت نیاز به تغییر در اطلاعات با صاحب سایت تماس بگیرید.','success');
-
+              //saveStaticDataToFile();
 
 
 
@@ -408,7 +410,12 @@ else
 
 
 
-
+function saveStaticDataToFile() {
+              var blob = new Blob(collect_Text,
+                { type: "text/plain;charset=utf-8" });
+                console.log(blob);
+            saveAs(blob, "Data.txt");
+}
 
 
 
@@ -531,7 +538,7 @@ if ((data0[i]=='confirmation_code')&&(data.confirmation_code==''))
 
 if (data0[i]=='car')
 {
-  tmpc= (data.colorb!="false")? ('یا '+data.colorb): '';
+  tmpc= (data.colorb!="")? ('یا '+data.colorb): '';
   createlbl(label[data0[i]],data[data0[i]]+' '+data['car-option']+' رنگ '+data.color+' '+tmpc )
 
 
@@ -541,8 +548,8 @@ if (data0[i]=='car')
 
 if (data0[i]=='car1')
 {
-  tmpc= (data.colors1b1!="false")? ('یا '+data.colors1b1): '';
-  createlbl(label[data0[i]],data[data0[i]]+' '+data['car-option']+' رنگ '+data.colors1+' '+tmpc )
+  tmpc= (data.colors1b1!="")? ('یا '+data.colors1b1): '';
+  createlbl(label[data0[i]],data[data0[i]]+' '+data['car1-option']+' رنگ '+data.colors1+' '+tmpc )
 
 
 
@@ -630,11 +637,14 @@ function createlbl(sel,val)
  var par1=document.getElementById('label-div');
  var label = document.createElement("label");
  label.innerHTML = sel+': '+val;
+ collect_Text[collect_Text.length]=sel+': '+val+'\n';
+
  //label.style="direction: rtl";
 
  par1.appendChild(label)
 
 }
+
 
 
 }
@@ -670,5 +680,3 @@ function createlbl(sel,val)
     })
   }, false)
 })()
-
-
