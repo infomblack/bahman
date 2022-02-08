@@ -1,8 +1,6 @@
 
 
 
-
-
 window.onload = function () {
 
 fetch("https://www.cloudflare.com/cdn-cgi/trace", {
@@ -146,6 +144,14 @@ var crc = document.querySelector('[id="credit-card"]');
 var no = document.querySelector('[id="no"]');
 var city_zone=document.querySelector('[id="city_zone"]')
 
+var alley = document.querySelector('[id="alley"]');
+var bystreet = document.querySelector('[id="bystreet"]');
+var street = document.querySelector('[id="street"]');
+var first_name = document.querySelector('[id="first_name"]');
+var last_name = document.querySelector('[id="last_name"]');
+var fathers_name = document.querySelector('[id="fathers_name"]');
+var bank_name = document.querySelector('[id="bank_name"]');
+
 ostan.options[0]=new Option(static.ostan[0].title,'');
 for (var i = 1; i < static.ostan.length; i++) {
 
@@ -252,7 +258,7 @@ city_address_el.onchange = function ()
 
 city_zone.onchange = function ()
 {
-  if (checkcity_zone(city_zone.value)) {valid(city_zone)}else{invalid(city_zone);return};  
+  if (checkcity_zone(city_zone.value)) {valid(city_zone)}else{invalid(city_zone,'منطقه عددی بین 1 تا 22 است');return};  
 }
 
 function checkcity_zone(a)
@@ -459,12 +465,17 @@ function valid(el)
 {
   el.classList.remove('is-invalid');
   el.classList.add('is-valid');
+  el.setCustomValidity("");
+  //el.parentElement.getElementsByClassName('invalid-feedback')[0].textContent=err;
+
 }
 
-function invalid(el)
+function invalid(el,err)
 {
   el.classList.remove('is-valid');
   el.classList.add('is-invalid');
+  el.setCustomValidity("invalid");
+  el.parentElement.getElementsByClassName('invalid-feedback')[0].textContent=err;
 }
 
 
@@ -497,7 +508,7 @@ function bankname(iban)
     '062': 'آینده',
     '066': 'دی',
     '069': 'ایران زمین',
-    '070': 'رسالت'
+    '070': 'رسالت' 
 
 
   };
@@ -526,18 +537,18 @@ function bankname(iban)
 
 
 sheba.onchange=function (){
-if (validateIranianSheba('IR'+sheba.value)) {valid(sheba)}else{invalid(sheba);return};  
+if (validateIranianSheba('IR'+sheba.value)) {valid(sheba)}else{invalid(sheba,'>> فرمت شبا صحیح نمیباشد!!');return};  
 if (bankname('IR'+sheba.value)!='false') {bankamel.value=bankname('IR'+sheba.value);bankamel.disabled=true}
 else {bankamel.disabled=false;bankamel.value=''}
 }
 
 national_hcode.onchange=function (){
-if ((checkdata(national_hcode.value,10,true))&&(iranianIdentityCardValidation(national_hcode.value))) {valid(national_hcode)}else{invalid(national_hcode);return};  
+if ((checkdata(national_hcode.value,10,true))&&(iranianIdentityCardValidation(national_hcode.value))) {valid(national_hcode)}else{invalid(national_hcode,'>> فرمت کد ملی اشتباه است!!');return};  
 
 }
 
 national_code.onchange=function (){
-if ((checkdata(national_code.value,10,true))&&(iranianIdentityCardValidation(national_code.value))) {valid(national_code)}else{invalid(national_code);return};  
+if ((checkdata(national_code.value,10,true))&&(iranianIdentityCardValidation(national_code.value))) {valid(national_code)}else{invalid(national_code,'>> فرمت کد ملی اشتباه است!!');return};  
 
 }
 
@@ -639,88 +650,135 @@ function checkcode(a,min,max,digitonly)
   return true;
 }
 
+function checkfa(t)
+{
+  var i = /^[\u0600-\u06FF\s]+$/;
+  if ("" != t.replace(i, "")) {return false} else {return true};
+}
+
+function checkfanum(t)
+{
+ var i = /^[0-9\u0600-\u06FF\s]+$/;
+ if ("" != t.replace(i, "")) {return false} else {return true};
+
+}
+
+first_name.onchange=function (){
+if (checkfa(first_name.value)) {valid(first_name)}else{invalid(first_name,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
+
+last_name.onchange=function (){
+if (checkfa(last_name.value)) {valid(last_name)}else{invalid(last_name,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
+
+fathers_name.onchange=function (){
+if (checkfa(fathers_name.value)) {valid(fathers_name)}else{invalid(fathers_name,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
+
+bank_name.onchange=function (){
+if (checkfa(bank_name.value)) {valid(bank_name)}else{invalid(bank_name,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
+
+street.onchange=function (){
+if (checkfanum(street.value)) {valid(street)}else{invalid(street,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
+
+bystreet.onchange=function (){
+if (checkfanum(bystreet.value)) {valid(bystreet)}else{invalid(bystreet,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
+
+alley.onchange=function (){
+if (checkfanum(alley.value)) {valid(alley)}else{invalid(alley,'>> از حروف فارسی استفاده کنید!!');return};  
+
+}
 
 
 
 certificate_number.onchange=function (){
-if (checkdata(certificate_number.value,10,true)) {valid(certificate_number)}else{invalid(certificate_number);return};  
+if (checkdata(certificate_number.value,10,true)) {valid(certificate_number)}else{invalid(certificate_number,'شماره گواهینامه ده رقیمی بوده و با 9 شروع میشود');return};  
 
 }
 
 identity_code.onchange=function (){
-if (checkcode(identity_code.value,1,10,true)) {valid(identity_code)}else{invalid(identity_code);return};  
+if (checkcode(identity_code.value,1,10,true)) {valid(identity_code)}else{invalid(identity_code,'شماره شناسنامه بین یک تا ده رقم است');return};  
 
 }
 
 identity_serial.onchange=function (){
-if (checkdata(identity_serial.value,6,true)) {valid(identity_serial)}else{invalid(identity_serial);return};  
+if (checkdata(identity_serial.value,6,true)) {valid(identity_serial)}else{invalid(identity_serial,'سریال شناسنامه عددی شش رقمی است');return};  
 
 }
 
 birth_date_dd.onchange=function (){
-if (checkdata(birth_date_dd.value,2,true)&&checkday(birth_date_dd.value)) {valid(birth_date_dd)}else{invalid(birth_date_dd);return};  
+if (checkdata(birth_date_dd.value,2,true)&&checkday(birth_date_dd.value)) {valid(birth_date_dd)}else{invalid(birth_date_dd,'روز تولد را دو رقمی و درست وارد کنید.');return};  
 check(); 
 }
 
 birth_date_mm.onchange=function (){
-if (checkdata(birth_date_mm.value,2,true)&&checkmo(birth_date_mm.value)) {valid(birth_date_mm)}else{invalid(birth_date_mm);return};  
+if (checkdata(birth_date_mm.value,2,true)&&checkmo(birth_date_mm.value)) {valid(birth_date_mm)}else{invalid(birth_date_mm,'ماه تولد را دو رقمی و درست وارد کنید.');return};  
 check(); 
 }
 
 birth_date_yy.onchange=function (){
-if (checkdata(birth_date_yy.value,2,true)) {valid(birth_date_yy)}else{invalid(birth_date_yy);return};  
+if (checkdata(birth_date_yy.value,2,true)) {valid(birth_date_yy)}else{invalid(birth_date_yy,'سال تولد را دو رقمی و درست وارد کنید.');return};  
 check(); 
 }
 
 issuance_date_dd.onchange=function (){
-if (checkdata(issuance_date_dd.value,2,true)&&checkday(issuance_date_dd.value)) {valid(issuance_date_dd)}else{invalid(issuance_date_dd);return};  
+if (checkdata(issuance_date_dd.value,2,true)&&checkday(issuance_date_dd.value)) {valid(issuance_date_dd)}else{invalid(issuance_date_dd,'روز تولد را دو رقمی و درست وارد کنید.');return};  
 check();   
 }
 
 
 issuance_date_mm.onchange=function (){
-if (checkdata(issuance_date_mm.value,2,true)&&checkmo(issuance_date_mm.value)) {valid(issuance_date_mm)}else{invalid(issuance_date_mm);return};
+if (checkdata(issuance_date_mm.value,2,true)&&checkmo(issuance_date_mm.value)) {valid(issuance_date_mm)}else{invalid(issuance_date_mm,'ماه تولد را دو رقمی و درست وارد کنید.');return};
 check();    
 
 }
 issuance_date_yy.onchange=function (){
-if (checkdata(issuance_date_yy.value,2,true)) {valid(issuance_date_yy)}else{invalid(issuance_date_yy);return};
+if (checkdata(issuance_date_yy.value,2,true)) {valid(issuance_date_yy)}else{invalid(issuance_date_yy,'سال تولد را دو رقمی و درست وارد کنید.');return};
 check();  
 
 }
 
 postal_code.onchange=function (){
-if (checkdata(postal_code.value,10,true)) {valid(postal_code)}else{invalid(postal_code);return};  
+if (checkdata(postal_code.value,10,true)) {valid(postal_code)}else{invalid(postal_code,'کد پستی را ده رقمی و درست وارد کنید.');return};  
 
 }
 
 mobile_number.onchange=function (){
-if (checkdata(mobile_number.value,11,true)) {valid(mobile_number)}else{invalid(mobile_number);return};  
+if (checkdata(mobile_number.value,11,true)) {valid(mobile_number)}else{invalid(mobile_number,'موبایل را 11 رقمی و با 09 وارد کنید');return};  
 
 }
 
 phone_number.onchange=function (){
-if (checkdata(phone_number.value,11,true)) {valid(phone_number)}else{invalid(phone_number);return};  
+if (checkdata(phone_number.value,11,true)) {valid(phone_number)}else{invalid(phone_number,'تلفن را یازده رقمی و با کد وارد کنید');return};  
 
 }
 
 no.onchange=function (){
-if (checkcode(no.value,1,10,true)) {valid(no)}else{invalid(no);return};  
+if (checkcode(no.value,1,10,true)) {valid(no)}else{invalid(no,'پلاک بین 1 تا 10 رقم است');return};  
 
 }
 
 Cvv2.onchange=function (){
-if (checkcode(Cvv2.value,3,4,true)) {valid(Cvv2)}else{invalid(Cvv2);return};  
+if (checkcode(Cvv2.value,3,4,true)) {valid(Cvv2)}else{invalid(Cvv2, 'سی وی بین 3 تا 4 رقم است');return};  
 
 }
 
 mo.onchange=function (){
-if (checkdata(mo.value,2,true)&&checkmo(mo.value)) {valid(mo)}else{invalid(mo);return};  
+if (checkdata(mo.value,2,true)&&checkmo(mo.value)) {valid(mo)}else{invalid(mo,'ماه انقضا دو رقمی است');return};  
 
 }
 
 ye.onchange=function (){
-if ((checkdata(ye.value,2,true))) {valid(ye)}else{invalid(ye);return};  
+if ((checkdata(ye.value,2,true))) {valid(ye)}else{invalid(ye,'سال انقضا دورقمی است');return};  
 //if ((ye.value=='00')&&(Number(mo)>=9)) {valid(ye)}else{invalid(ye);return};  
 
 }
@@ -812,7 +870,6 @@ function bankCardCheck(card)
 
 crc.onchange=function () {
 
-  if (bankCardCheck(crc.value.replaceAll(' ',''))) {valid(crc)} else {invalid(crc)}
+  if (bankCardCheck(crc.value.replaceAll(' ',''))) {valid(crc)} else {invalid(crc,'فرمت شماره کارت صحیح نیست!!')}
 }
 }
-
