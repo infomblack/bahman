@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.rtl.min.css" integrity="sha384-gXt9imSW0VcJVHezoNQsP+TNrjYXoGcrqBZJpry9zJt8PCQjobwmhMGaDHTASo9N" crossorigin="anonymous">
 
@@ -12,15 +13,16 @@
  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
 
-    <script src="https://registration666form.github.io/bahman/js/MainScript.js"></script>
-    <script src="https://registration666form.github.io/bahman/js/JavaScript.js"></script>
-    <script src="https://registration666form.github.io/bahman/js/StaticData.js"></script>
-    <script src="https://registration666form.github.io/bahman/js/startcountdown.js"></script>
-    <script src="https://registration666form.github.io/bahman/js/countdownjs.js"></script>
-   <link rel="stylesheet" href="https://registration666form.github.io/ikco/js/countdowncss.css"></link>
+
+    <script src="https://regform.github.io/bahman/js/MainScript.js"></script>
+    <script src="https://regform.github.io/bahman/js/JavaScript.js"></script>
+    <script src="https://regform.github.io/bahman/js/StaticData.js"></script>
+    <script src="https://regform.github.io/bahman/js/startcountdown.js"></script>
+    <script src="https://regform.github.io/bahman/js/countdownjs.js"></script>
+   <link rel="stylesheet" href="https://regform.github.io/bahman/js/countdowncss.css"></link>
 	
 
-  </head>
+ </head>
   <body>
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
       <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
@@ -179,7 +181,7 @@
               <div class="col-">
                 <p>انتخاب رنگ با اولویت دوم در صورت تکمیل ظرفیت رنگ</p>
                 <div class="form-check-inline">
-                  <input class="form-check-input" type="radio" name="colorb" id="colorb-zero" value="false" required="">
+                  <input class="form-check-input" type="radio" name="colorb" id="colorb-zero" value="" required="">
                   <label class="form-check-label" for="colorb-zero">فقط رنگ انتخابی اصل</label>
                 </div>
                 <div class="form-check-inline">
@@ -256,7 +258,7 @@
                 <div class="col-">
                   <p>انتخاب رنگ با اولویت دوم در صورت تکمیل ظرفیت رنگ</p>
                   <div class="form-check-inline">
-                    <input class="form-check-input" type="radio" name="colors1b1" id="colors1b1-zero" value="false">
+                    <input class="form-check-input" type="radio" name="colors1b1" id="colors1b1-zero" value="">
                     <label class="form-check-label" for="colors1b1-zero">فقط رنگ انتخابی اصلی</label>
                   </div>
                   <div class="form-check-inline">
@@ -470,19 +472,19 @@
               </div>
               <div class="col-md-6">
                 <label for="certificate_number">شماره گواهینامه</label>
-                <input type="text" style="direction: ltr" pattern="[0-9]{10}" maxlength="10" minlength="10" class="form-control" id="certificate_number" name="certificate_number" placeholder="شماره گواهینامه" required="">
+                <input type="text" style="direction: ltr" pattern="^[9][0-9]{9}$" maxlength="10" minlength="10" class="form-control" id="certificate_number" name="certificate_number" placeholder="شماره گواهینامه" required="">
                 <div class="invalid-feedback"> شماره گواهینامه را وارد کنید.</div>
               </div>
             </div>
             <div class="row">
               <div class="col-md-6">
                 <label for="mobile_number">تلفن همراه</label>
-                <input type="tel" style="direction: ltr" pattern="[0-9]{11}" maxlength="11" minlength="11" class="form-control" id="mobile_number" name="mobile_number" placeholder="تلفن همراه" required="">
+                <input type="tel" style="direction: ltr" pattern="^[0][9][0-9]{9}$" maxlength="11" minlength="11" class="form-control" id="mobile_number" name="mobile_number" placeholder="تلفن همراه" required="">
                 <div class="invalid-feedback">تلفن همراه را وارد کنید.</div>
               </div>
               <div class="col-md-6">
                 <label for="phone_number">تلفن ثابت با کد</label>
-                <input type="tel" style="direction: ltr" pattern="[0-9]{11}" maxlength="11" minlength="11" required="" class="form-control" id="phone_number" name="phone_number" placeholder="تلفن ثابت با کد">
+                <input type="tel" style="direction: ltr" pattern="^[0][0-9]{10}$" maxlength="11" minlength="11" required="" class="form-control" id="phone_number" name="phone_number" placeholder="تلفن ثابت با کد">
                 <div class="invalid-feedback">تلفن ثابت را وارد کنید.</div>
               </div>
             </div>
@@ -571,9 +573,11 @@
       <div class="space" style="margin:0; padding:0; height:50px"></div>
       <button type="button" id="back" onclick="GoBack()" class="btn btn-secondary btn-lg">ویرایش اطلاعات</button>
       <div class="space" style="margin:0; padding:0; height:50px"></div>
+      <!--button type="button" onclick="saveStaticDataToFile();" class="btn btn-secondary btn-lg">Click to Save</button-->
     </div>
     
     </div>
 
   </body>
 </html>
+
