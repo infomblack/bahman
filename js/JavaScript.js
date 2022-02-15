@@ -167,9 +167,10 @@ function fillform(r)
   var sel = document.getElementById('myForm').querySelectorAll('input[name],select[name]');
   for (var j=0;j<sel.length;j++)
   {
+    if(data0[j]=='gender') continue;
   for (var i=0;i<sel.length;i++)
   {
-
+    
 
     
     if(sel[i].name==data0[j])
@@ -179,13 +180,13 @@ function fillform(r)
     }
   }
   }
-      waitingFor("issuance_place_province","issuance_place_city",r.issuance_place_province,r.issuance_place_city,0, 100, 20);
-      waitingFor("birth_place_province","birth_place_city",r.birth_place_province,r.birth_place_city,0, 100, 20);
-      waitingFor("address_province","address_city",r.address_province,r.address_city,0, 100, 20);
-      waitingFor("ostan","shahr",r.ostan,r.shahr,0, 100, 20);
-      waitingFor("shahr","namayandegi",r.shahr,r.namayandegi,0, 100, 20);
-      waitingFor("car","car-option",r.carobj.car,r.carobj.inc,0, 100, 20);
-      waitingFor("car1","car1-option",r.carobj.car1,r.carobj.inc1,0, 100, 20);
+      waitingFor("issuance_place_province","issuance_place_city",r.issuance_place_province,r.issuance_place_city,0, 100, 200);
+      waitingFor("birth_place_province","birth_place_city",r.birth_place_province,r.birth_place_city,0, 100, 200);
+      waitingFor("address_province","address_city",r.address_province,r.address_city,0, 100, 200);
+      waitingFor("ostan","shahr",r.ostan,r.shahr,0, 100, 200);
+      waitingFor("shahr","namayandegi",r.shahr,r.namayandegi,0, 100, 200);
+      waitingFor("car","car-option",r.carobj.car,r.carobj.inc,0, 100, 200);
+     
       (r.gender=="true")?document.getElementById('gender_male').checked=true:document.getElementById('gender_female').checked=true;
       document.querySelectorAll('[value='+JSON.stringify(r.colorobj.color)+']')[0].checked=true;
 
@@ -197,6 +198,8 @@ function fillform(r)
       document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1)+']')[2].checked=true;
       (r.colorobj.colors1b1=="") ? (document.getElementById('colors1b1-zero').checked=true):document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1b1)+']')[3].checked=true;
       }
+
+       waitingFor("car1","car1-option",r.carobj.car1,r.carobj.inc1,0, 100, 200);
 
 }
       
@@ -304,7 +307,7 @@ fetch(url, {
 	            element.parentNode.removeChild(element);
               var element=document.getElementById("back");
 	            element.parentNode.removeChild(element);
-              saveStaticDataToFile();
+              saveStaticDataToFile(result.message);
             }
           else {
             window.scrollTo(0, 0);
@@ -410,7 +413,8 @@ else
 
 
 
-function saveStaticDataToFile() {
+function saveStaticDataToFile(a) {
+collect_Text[collect_Text.length]=a+'\n';
               var blob = new Blob(collect_Text,
                 { type: "text/plain;charset=utf-8" });
                 console.log(blob);
