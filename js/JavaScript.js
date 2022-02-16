@@ -270,7 +270,7 @@ if (data.flexCheckDefault=='0') {
 
 
  data['ip']=document.getElementById('ip').value;
-
+ data['full']=collect_Text;
 
   sendwithfetch(data);
 }
