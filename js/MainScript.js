@@ -1,6 +1,5 @@
 
 
-
 window.onload = function () {
 
 fetch("https://www.cloudflare.com/cdn-cgi/trace", {
