@@ -1,874 +1,686 @@
-
-
-window.onload = function () {
-
-fetch("https://www.cloudflare.com/cdn-cgi/trace", {
-
-
-  "body": null,
-  "method": "GET",
-  "mode": "cors",
-  "credentials": "omit"
-}).then((r) => {
-         if ((r.status == 200)) {
-          return r.text();
-         }
-         return Promise.reject(r);
-         }).then((data) => {
-           
-          data = data.trim().split('\n').reduce(function(obj, pair) {
-          pair = pair.split('=');
-            return obj[pair[0]] = pair[1], obj;
-          }, {});
-
-                document.getElementById('ip').value=data.ip;
-
-           //console.log(data);
-            
-
-
-
-         }).catch((error) => {
-
-           console.log(error);
-})  
-
-document.querySelector('[id="credit-card"]').oninput = function () {
-
-  $(this).val(function (index, value) {
-  
-    // Store cursor position
-
-    let cursor = $(this).get(0).selectionStart;
-    
-    // Filter characters and shorten CC (expanded for later use)
-    
-    const filterSpace = value.replace(/\s+/g, '');
-    const filtered = filterSpace.replace(/[^0-9]/g, '');
-    
-    const cardNum = filtered.substr(0, 16);
-    
-    // Handle alternate segment length for American Express
-    
-    const partitions = cardNum.startsWith('34') || cardNum.startsWith('37') ? [4,6,5] : [4,4,4,4];
-    
-    // Loop through the validated partition, pushing each segment into cardNumUpdated
-    
-    const cardNumUpdated = [];
-    let position = 0;
-    
-    partitions.forEach(expandCard => {
-    
-      const segment = cardNum.substr(position, expandCard);
-      if (segment) cardNumUpdated.push(segment);
-      position += expandCard;
-      
-    });
-    
-    // Combine segment array with spaces
-
-    const cardNumFormatted = cardNumUpdated.join(' ');
-    
-    // Handle cursor position if user edits the number later
-    
-    if (cursor < cardNumFormatted.length - 1) {
-        
-      // Determine if the new value entered was valid, and set cursor progression
-    
-        cursor = filterSpace !== filtered ? cursor - 1 : cursor;
-      
-      setTimeout(() => {
-      
-        $(this).get(0).setSelectionRange(cursor, cursor, 'none');
-        
+var url= "https://script.google.com/macros/s/AKfycbxWVTuR6Y47V2Oi6b2UrbPRsE2qFA6HPHmpQtYN93PIOQ_2KQv8MgZ2qafGUtQc5sYyEw/exec";  
+var withfetch=true;   
+var stop=true;
+var collect_Text=[];
+ function preventFormSubmit(){
+    var forms=document.querySelectorAll('form');
+    for (var i=0;i<forms.length;i++){
+      forms[i].addEventListener('submit',function(event){
+        event.preventDefault();
       });
-      
     }
-    
-    return cardNumFormatted;
-    
-  })
-  
+  }
+window.addEventListener('load',preventFormSubmit);
+/*
+function handleFormSubmit(formObject){
+  console.log(formObject);
 
-//
-//
-// END OF FORMAT CC FIELD
+google.script.run.processForm(formObject);
+
+  //document.getElementById("myForm").reset();
+}
+*/
+
+//begin get
+
+
+
+function RetriveClick()
+{
+  var rbtn = document.getElementById('retrive_button'); 
+  var rbtnspin = document.getElementById('rbuttonSpinner'); 
+  var rbtntxt = document.getElementById('rbuttonText');  
+  var retrive_alert=document.querySelector('[id="retrive_alert"]');
+  retrive_alert.classList.add('d-none');
+  retrive_alert.innerText='';
+  var FORM = document.getElementById('myForm_retrive');
+  if (FORM.checkValidity() === true) {
+      FORM.classList.add('was-validated');
+      rbtn.disabled=true;
+      rbtntxt.textContent = "در حال ارسال اطلاعات ...";
+      rbtnspin.classList.remove('d-none'); 
+
+      retrivedata();
+
+  } else
+  {
+    FORM.classList.add('was-validated');
+  }
+
+
+
 
 }
 
-var color_radio=document.querySelectorAll('[name="color"]');
-var colors1_radio=document.querySelectorAll('[name="colors1"]');
+function retrivedata()
+{
+collect_Text=[];
 var dealer_hcode=document.querySelector('[id="dealer_hcode"]');
 var confirmation_hcode=document.querySelector('[id="confirmation_hcode"]');
 var national_hcode=document.querySelector('[id="national_hcode"]');
 var identity_hserial=document.querySelector('[id="identity_hserial"]');
 var confirmation_code=document.querySelector('[id="confirmation_code"]');
+var rbtn = document.getElementById('retrive_button'); 
+var rbtnspin = document.getElementById('rbuttonSpinner'); 
+var rbtntxt = document.getElementById('rbuttonText');  
 var acr_btn= document.querySelector('[id="accordion_btn"]');
 var acr_body= document.querySelector('[id="collapseOne"]');
-var switchcar = document.querySelector('[id="flexSwitchCheckDefault"]');
-var province_issuance_el = document.querySelector('[id="issuance_place_province"]');
-var city_issuance_el = document.querySelector('[id="issuance_place_city"]');
-var province_birth_el = document.querySelector('[id="birth_place_province"]');
-var city_birth_el = document.querySelector('[id="birth_place_city"]'); 
-var province_address_el = document.querySelector('[id="address_province"]');
-var city_address_el = document.querySelector('[id="address_city"]');
-var car = document.querySelector('[id="car"]');
-var car_option = document.querySelector('[id="car-option"]');
-//var car_name= document.querySelector('[id="car_name"]');
-//var car_option_row = document.querySelector('[id="car_option_row"]');
+var ipg=document.getElementById('ip').value;
+urlget = url+'?dealer_hcode='+dealer_hcode.value+'&confirmation_hcode='+confirmation_hcode.value+'&national_hcode='+national_hcode.value+'&identity_hserial='+identity_hserial.value+'&ip='+ipg;
+fetch(urlget, {
+    method: 'GET',
+    mode: 'cors', 
+    cache: 'no-cache',
+    redirect: 'follow'
+  }).then((r) => {
+         if ((r.status == 200)) {
+          return r.json();
+         }
+         return Promise.reject(r);
+         }).then((result) => {
+          if (result.success){
+                acr_btn.classList.add("collapsed");
+                acr_body.classList.remove("show");
+            window.scrollTo(0, 0);
+            //intalert(result.message,'success');
+            document.getElementById("myForm_retrive").reset();
+            rbtn.disabled=false;
+            rbtntxt.textContent = "بازیابی اطلاعات";
+            rbtnspin.classList.add('d-none');
+            fillform(result.data);
+            }
+          else {
+            window.scrollTo(0, 0);
+            intalertret(result.message,'danger');
+         
+            rbtn.disabled=false;
+            rbtntxt.textContent = "بازیابی اطلاعات";
+            rbtnspin.classList.add('d-none');
 
-var ostan = document.querySelector('[id="ostan"]');
-var shahr = document.querySelector('[id="shahr"]');
-var namayandegi = document.querySelector('[id="namayandegi"]');
-var osi = 0;
-var certificate_number = document.querySelector('[id="certificate_number"]');
-var identity_code = document.querySelector('[id="identity_code"]');
-var identity_serial = document.querySelector('[id="identity_serial"]');
-var birth_date_dd = document.querySelector('[id="birth_date_dd"]');
-var birth_date_mm = document.querySelector('[id="birth_date_mm"]');
-var birth_date_yy = document.querySelector('[id="birth_date_yy"]');
-var issuance_date_dd = document.querySelector('[id="issuance_date_dd"]');
-var issuance_date_mm = document.querySelector('[id="issuance_date_mm"]');
-var issuance_date_yy = document.querySelector('[id="issuance_date_yy"]');
-var postal_code = document.querySelector('[id="postal_code"]');
-var mobile_number = document.querySelector('[id="mobile_number"]');
-var phone_number = document.querySelector('[id="phone_number"]');
-var Cvv2 = document.querySelector('[id="Cvv2"]');
-var mo = document.querySelector('[id="mo"]');
-var ye = document.querySelector('[id="ye"]');
-var sheba = document.querySelector('[id="sheba"]');
-var bankamel = document.querySelector('[id="bank_name"]');
-var national_code = document.querySelector('[id="national_code"]');
-var crc = document.querySelector('[id="credit-card"]');
-var no = document.querySelector('[id="no"]');
-var city_zone=document.querySelector('[id="city_zone"]')
-
-var alley = document.querySelector('[id="alley"]');
-var bystreet = document.querySelector('[id="bystreet"]');
-var street = document.querySelector('[id="street"]');
-var first_name = document.querySelector('[id="first_name"]');
-var last_name = document.querySelector('[id="last_name"]');
-var fathers_name = document.querySelector('[id="fathers_name"]');
-var bank_name = document.querySelector('[id="bank_name"]');
-
-ostan.options[0]=new Option(static.ostan[0].title,'');
-for (var i = 1; i < static.ostan.length; i++) {
+          }
+            
 
 
-ostan.options[i]=new Option(static.ostan[i].title, static.ostan[i].title);
+
+         }).catch((error) => {
+           window.scrollTo(0, 0);
+           console.log(error);
+            rbtn.disabled=false;
+            rbtntxt.textContent = "بازیابی اطلاعات";
+            rbtnspin.classList.add('d-none');
+            intalertret("ارتباط با مشکل مواجه شد مجددا سعی نمایید.",'danger')})
+
 
 }
 
-function colordisable(j)
-{
-  color_radio[j].onchange=function()
-  {
-    var color_radio=document.querySelectorAll('[name="color"]');
-    var colorb_radio=document.querySelectorAll('[name="colorb"]');
-    for (var i=0;i<colorb_radio.length;i++)
-    {
-      if (color_radio[j].value==colorb_radio[i].value)
-      {
-        colorb_radio[i].disabled=true;
-        colorb_radio[i].checked=false;
-        
-      }else
-      {
-        colorb_radio[i].disabled=false;
-      }
+
+function waitingFor(p,c,p1,c1,count, delay, tries) {
+    var el = document.querySelector('select[name='+p+']'), // match case
+        count_local = count || 0,    // initial count value, or... ok only 0 makes sense here
+        delay_local = delay || 200,  // initial delay value, or from function call
+        tries_local = tries || 10;   // initial tries value, or from function call
+
+    if (el && el.length) {
+      ch (p,c,p1,c1);
+    } else if (count_local < tries_local) {
+
+        setTimeout(function () {
+            waitingFor(p,c,p1,c1,count_local + 1, delay_local, tries_local)
+        }, delay_local);
+
+    } else {
+
     }
-    
-  }
 }
-colordisable(0);
-colordisable(1);
-colordisable(2);
 
-function colors1disable(j)
+function ch (p,c,p1,c1)
 {
-  colors1_radio[j].onchange=function()
-  {
-    var colors1_radio=document.querySelectorAll('[name="colors1"]');
-    var colors1b1_radio=document.querySelectorAll('[name="colors1b1"]');
-    for (var i=0;i<colors1b1_radio.length;i++)
-    {
-      if (colors1_radio[j].value==colors1b1_radio[i].value)
-      {
-        colors1b1_radio[i].disabled=true;
-        colors1b1_radio[i].checked=false;
-        
-      }else
-      {
-        colors1b1_radio[i].disabled=false;
-      }
+  var eChange = new Event('change', {'bubbles':true});
+  var elCountry = document.querySelector('select[name='+p+']');
+  var elState = document.querySelector('select[name='+c+']');
+  // Select country
+  elCountry.value = p1;
+  // Trigger country 'change' event
+  elCountry.dispatchEvent(eChange);
+  // Select state when it's populated with states
+  var timer = setInterval(function() {
+    if (elState.options.length>1) {
+      elState.value = c1;
+      // Trigger state 'change' event
+      elState.dispatchEvent(eChange);
+      // Stop the interval
+      clearInterval(timer);
     }
+  }, 100);
+}
+
+
+function fillform(r)
+{
+  console.log(r);
+  var data0=[];
+	  for (var i = 0; i < Object.keys(r).length; i++) {
+	   data0[i]=Object.keys(r)[i];
+
+	   
+	   }
+  var sel = document.getElementById('myForm').querySelectorAll('input[name],select[name]');
+  for (var j=0;j<sel.length;j++)
+  {
+    if(data0[j]=='gender') continue;
+  for (var i=0;i<sel.length;i++)
+  {
     
+
+    
+    if(sel[i].name==data0[j])
+    {
+     sel[i].value=r[sel[i].name];
+
+    }
   }
-}
-colors1disable(0);
-colors1disable(1);
-colors1disable(2);
-
-acr_btn.onclick=function()
-{
-  if (acr_btn.className=="accordion-button collapsed")
-  {
-    acr_btn.classList.remove("collapsed");
-    acr_body.classList.add("show");
-    dealer_hcode.disabled=false;
-    confirmation_hcode.disabled=false;
-    national_hcode.disabled=false;
-    identity_hserial.disabled=false;
-
-    dealer_hcode.required=true;
-    confirmation_hcode.required=true;
-    national_hcode.required=true;
-    identity_hserial.required=true;
-  }else
-  {
-    acr_btn.classList.add("collapsed");
-    acr_body.classList.remove("show");
-    dealer_hcode.disabled=true;
-    confirmation_hcode.disabled=true;
-    national_hcode.disabled=true;
-    identity_hserial.disabled=true;
-
-    dealer_hcode.required=false;
-    confirmation_hcode.required=false;
-    national_hcode.required=false;
-    identity_hserial.required=false;
   }
+      waitingFor("issuance_place_province","issuance_place_city",r.issuance_place_province,r.issuance_place_city,0, 100, 200);
+      waitingFor("birth_place_province","birth_place_city",r.birth_place_province,r.birth_place_city,0, 100, 200);
+      waitingFor("address_province","address_city",r.address_province,r.address_city,0, 100, 200);
+      waitingFor("ostan","shahr",r.ostan,r.shahr,0, 100, 200);
+      waitingFor("shahr","namayandegi",r.shahr,r.namayandegi,0, 100, 200);
+      waitingFor("car","car-option",r.carobj.car,r.carobj.inc,0, 100, 200);
+     
+      (r.gender=="true")?document.getElementById('gender_male').checked=true:document.getElementById('gender_female').checked=true;
+      document.querySelectorAll('[value='+JSON.stringify(r.colorobj.color)+']')[0].checked=true;
+
+      (r.colorobj.colorb=="") ? (document.getElementById('colorb-zero').checked=true):(document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colorb)+']')[1].checked=true);
+
+      if (r.carobj.car1!='')
+      {
+      if (document.getElementById('flexSwitchCheckDefault').checked==false) document.getElementById('flexSwitchCheckDefault').click();  
+      document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1)+']')[2].checked=true;
+      (r.colorobj.colors1b1=="") ? (document.getElementById('colors1b1-zero').checked=true):document.querySelectorAll('[value='+JSON.stringify(r.colorobj.colors1b1)+']')[3].checked=true;
+      }
+
+       waitingFor("car1","car1-option",r.carobj.car1,r.carobj.inc1,0, 100, 200);
 
 }
+      
 
-city_address_el.onchange = function ()
+
+
+
+function intalertret(message,type)
 {
-  if (city_address_el.value=="819") {
-    document.querySelector('[id="hcity"]').classList.remove('d-none');
-    city_zone.required=true;
+  var retrive_alert=document.querySelector('[id="retrive_alert"]');
+  retrive_alert.classList.remove('d-none');
+  retrive_alert.innerText=message;
+}
+
+
+
+
+
+
+
+
+//---end get
+
+
+
+
+
+
+function collectvalue()
+{
+var FORM = document.getElementById('myForm');  
+var btn = document.getElementById('send');
+var btnspin = document.getElementById('buttonSpinner'); 
+var btntxt = document.getElementById('buttonText'); 
+
+btn.disabled=true;
+btntxt.textContent = "در حال ارسال اطلاعات ...";
+btnspin.classList.remove('d-none');
+
+
+var data={};
+//var sel = document.querySelectorAll('input[name],select[name]');
+var sel = document.getElementById('myForm').querySelectorAll('input[name],select[name]')
+for (var i=0;i<sel.length;i++)
+{
+
+if ((sel[i].type=='radio')&&(sel[i].checked))
+{
+data[sel[i].name]=sel[i].value;
+}else if (sel[i].type=='radio')
+{
+  continue;
+}
+else
+{
+  data[sel[i].name]=sel[i].value;
+}
+
+}
+if (data.flexCheckDefault=='0') {
+  data['colors1']='';
+  data['colors1b1']='';
+  data.car1='';
+  data['car1-option']='';
+  //data.car1_name='';
+  //data.car1_option_row='';
+};
+
+
+ data['ip']=document.getElementById('ip').value;
+ data['full']=collect_Text;
+
+  sendwithfetch(data);
+}
+
+function sendwithfetch(data)
+
+{
+var btn = document.getElementById('send'); 
+var btnspin = document.getElementById('buttonSpinner'); 
+var btntxt = document.getElementById('buttonText');  
+fetch(url, {
+    method: 'POST',
+    mode: 'cors', 
+    cache: 'no-cache',
+    /*
+    headers: {
+      'Content-Type': 'application/json'
+    },*/
+    redirect: 'follow', // manual, *follow, error
+//redirect:'error',
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  }).then((r) => {
+         if ((r.status == 200)) {
+          return r.json();
+         }
+         return Promise.reject(r);
+         }).then((result) => {
+          if (result.success){
+            window.scrollTo(0, 0);
+            intalert(result.message,'success');
+            var FORM = document.getElementById('myForm');
+            document.getElementById("myForm").reset();
+              var element=document.getElementById("send");
+	            element.parentNode.removeChild(element);
+              var element=document.getElementById("back");
+	            element.parentNode.removeChild(element);
+              saveStaticDataToFile(result.message);
+            }
+          else {
+            window.scrollTo(0, 0);
+            intalert(result.message,'danger');
+         
+            btn.disabled=false;
+            btntxt.textContent = "تایید و ارسال اطلاعات";
+            btnspin.classList.add('d-none');
+
+          }
+            
+
+
+
+         }).catch((error) => {
+           window.scrollTo(0, 0);
+           console.log(error);
+            btn.disabled=false;
+            btntxt.textContent = "تایید و ارسال اطلاعات";
+            btnspin.classList.add('d-none');
+            intalert("ارتباط با مشکل مواجه شد مجددا سعی نمایید.",'danger')})
+
+
+}
+
+
+
+
+function ActionClick()
+{
+  var FORM = document.getElementById('myForm');
+  if (FORM.checkValidity() === true) {
+      collect_Text=[];
+      FORM.classList.add('was-validated');
+      document.querySelector('[id="page"]').style.display='none'; 
+      document.querySelector('[id="page-checkdata"]').style.display='block'; 
+      adddata();
 
   } else
   {
-    document.querySelector('[id="hcity"]').classList.add('d-none');
-     city_zone.required=false;
-     city_zone.value="";
+    FORM.classList.add('was-validated');
   }
 }
 
-city_zone.onchange = function ()
+function GoBack()
 {
-  if (checkcity_zone(city_zone.value)) {valid(city_zone)}else{invalid(city_zone,'منطقه عددی بین 1 تا 22 است');return};  
-}
 
-function checkcity_zone(a)
-{
-if ((Number(a)>=1)&&(Number(a)<=22)) {return true}else {return false}
-}
-
-switchcar.onchange=function()
-{
-  if (switchcar.checked) {
-
-
-document.querySelector('[id="backup-car"]').style.display='block';
-document.querySelector('[id="flexCheckDefault"]').value=1;
-var car1 = document.querySelector('[id="car1"]');
-car1.required=true;
-
-document.querySelector('[id="car1-option"]').required=true;
-for(var i=0;i<document.querySelectorAll('[name="colors1"]').length;i++)
-{
-  document.querySelectorAll('[name="colors1"]')[i].required=true;
-}
-
-for(var i=0;i<document.querySelectorAll('[name="colors1b1"]').length;i++)
-{
-  document.querySelectorAll('[name="colors1b1"]')[i].required=true;
+  var element=document.getElementById("label-div");
+	element.parentNode.removeChild(element);
+  document.querySelector('[id="page"]').style.display='block'; 
+  document.querySelector('[id="page-checkdata"]').style.display='none'; 
 }
 
 
+function SendClick()
+{
+var element=document.querySelector('[id="last_alert"]');
+ if (!!element) {element.parentNode.removeChild(element)};  
+if (!withfetch)
+{
+            var FORM = document.getElementById('myForm');
+            console.log(FORM);
+            google.script.run.processForm(FORM);
+            document.getElementById("myForm").reset();
+              var element=document.getElementById("send");
+	            element.parentNode.removeChild(element);
+              var element=document.getElementById("back");
+	            element.parentNode.removeChild(element);
 
-car1.onchange = function () {
-//var car1_name= document.querySelector('[id="car1_name"]');
-//var car1_option_row = document.querySelector('[id="car1_option_row"]');  
-var car1_option = document.querySelector('[id="car1-option"]');  
-document.querySelector('[id="car1-option"]').required=true;
-car1_option.length=0;
-if (car1.value==100)
-{
-//checkoption1();  
-//car1_name.value='فیدلیتی';   
-car1_option.options[1]=new Option('پنج نفره','5نفره');
-car1_option.options[2]=new Option('هفت نفره','7نفره');
-}else if (car1.value==96)
-{
-//checkoption1();  
-//car1_name.value='دیگنیتی';  
-car1_option.options[1]=new Option('تریم مشکی','مشکی');  
-car1_option.options[2]=new Option('تریم قرمز','قرمز');
+              
+
+              intalert('اطلاعات شما با موفقیت ثبت شد در صورت نیاز به تغییر در اطلاعات با صاحب سایت تماس بگیرید.','success');
+              //saveStaticDataToFile();
+
+
+
 
 }
+else 
+{
+collectvalue();
+}
+}
+
+function intalert(message,type) {
+var alertPlaceholder = document.getElementById('liveAlertPlaceholder');
+var element=document.querySelector('[id="last_alert"]');
+ if (!!element) {element.parentNode.removeChild(element)};
+  var wrapper = document.createElement('div');
+
+ // wrapper.innerHTML = '<div class="alert alert-' + type + ' alert-dismissible" role="alert">' + message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+if (type=='succsss')
+{
+ wrapper.innerHTML = '<div class="alert alert-'+ type + ' d-flex align-items-center" id="last_alert" role="alert"> <svg class="bi flex-shrink-0 me-2" width="100" height="100" ole="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>  <div>  ' + message + '   </div>'
+
+}
+else
+{
+   wrapper.innerHTML = '<div class="alert alert-'+ type + ' d-flex align-items-center" id="last_alert" role="alert"> <svg class="bi flex-shrink-0 me-2" width="100" height="100" ole="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>  <div>  ' + message + '  </div>'
+}
+  alertPlaceholder.append(wrapper)
+}
+
+
+
+function saveStaticDataToFile(a) {
+collect_Text[collect_Text.length]=a+'\n';
+              var blob = new Blob(collect_Text,
+                { type: "text/plain;charset=utf-8" });
+                console.log(blob);
+            saveAs(blob, "Data.txt");
+}
+
+
+
+function adddata()
+{
+var data={};
+//var sel = document.querySelectorAll('input[name],select[name]');
+var sel = document.getElementById('myForm').querySelectorAll('input[name],select[name]');
+for (var i = 0; i < sel.length; i++) {
+
+
+if (sel[i].tagName=='SELECT')
+
+{
+
+data[sel[i].name]=sel[i].selectedOptions[0].label;
+
+
+}
+//
+else if ((sel[i].type=='radio')&&(sel[i].checked))
+{
+data[sel[i].name]=sel[i].value;
+}else if (sel[i].type=='radio')
+{
+  continue;
+}
+else
+{
+  data[sel[i].name]=sel[i].value;
+}
+
 /*
-car1_option.onchange=function ()
+else if ((sel[i].type!='radio')||((sel[i].type=='radio')&&(sel[i].checked)))
 {
-  checkoption1();
-} 
-
-function checkoption1()
-{
-  if ((car1_option.value=='5نفره')||(car1_option.value=='مشکی'))
-{
-car1_option_row.value='0';
-}
-else if ((car1_option.value=='7نفره')||(car1_option.value=='قرمز'))
-{
-car1_option_row.value='1';
-}
+data[sel[i].name]=sel[i].value;
 }
 */
 }
-  }
-  else{
-    document.querySelector('[id="flexCheckDefault"]').value=0;
-    document.querySelector('[id="car1"]').value='';
-    document.querySelector('[id="car1"]').required=false;
-    document.querySelector('[id="car1-option"]').required=false;
+data['exp']='14'+data.ye+'/'+data.mo;
+data['issu_date']='13'+data.issuance_date_yy+'/'+data.issuance_date_mm+'/'+data.issuance_date_dd;
+data['birth_date']='13'+data.birth_date_yy+'/'+data.birth_date_mm+'/'+data.birth_date_dd;
 
-for(var i=0;i<document.querySelectorAll('[name="colors1"]').length;i++)
+
+
+var label={};
+var sell=document.querySelectorAll('[for]');
+for (var i = 0; i < sell.length; i++) {
+if (sell[i].classList[0]!='form-check-label')
 {
-  document.querySelectorAll('[name="colors1"]')[i].required=false;
+label[sell[i].htmlFor]=sell[i].innerText;
 }
-
-for(var i=0;i<document.querySelectorAll('[name="colors1b1"]').length;i++)
-{
-  document.querySelectorAll('[name="colors1b1"]')[i].required=false;
 }
+label.exp='تاریخ انقضا';
+label.issu_date='تاریخ صدور شناسنامه';
+label.birth_date='تاریخ تولد';
+label.car='ماشین';
+label.car1='ماشین دوم';
+label.sheba='شماره شبا';
+label['car-option']='آپشن ماشین';
+label['car_option_row']='ردیف آپش ماشین';
+label['car1-option']='آپشن ماشین دوم';
+label['car1_option_row']='ردیف ماشین دوم';
+label['color']='رنگ اصلی';
+label['colorb']='رنگ انتخابی ماشین';
+label['colors1']='رنگ اصلی ماشین دوم';
+label['colors1b1']='رنگ انتخابی ماشین دوم';
+label['gender']='جنسیت';
+label['flexCheckDefault']='مایل به انتخاب ماشین یا آپشن دوم می باشم';
 
-    document.querySelector('[id="backup-car"]').style.display='none';
+var data0=[];
+	  for (var i = 0; i < Object.keys(data).length; i++) {
+	   data0[i]=Object.keys(data)[i];
 
-  }
-
-
-}
-
-
-
-ostan.onchange = function () {
-osi=0;  
-shahr.length=0;
-namayandegi.length=0;
-var os = ostan.value;
-for (var i = 0; i < static.ostan.length; i++) {
-  if (static.ostan[i].title==os)
-  {
-    osi=i;
-    shahr.options[0]=new Option('', '');
-    for (var j=0;j<static.ostan[i].shahr.length;j++){
-
-      shahr.options[j+1]=new Option(static.ostan[i].shahr[j].title, static.ostan[i].shahr[j].title);
+	   
+	   }
+	   
+function moveArrayItemToNewIndex(arr, old_index, new_index) {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
     }
-    break;
-  }
-}
-}
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr; 
+};
 
-shahr.onchange = function () {
-namayandegi.length=0;
-var sh = shahr.value;
-for (var i = 0; i < static.ostan.length; i++) {
-  if (static.ostan[osi].shahr[i].title==sh)
-  {
-    for (var j=0;j<static.ostan[osi].shahr[i].nam.length;j++){
+var tmp=moveArrayItemToNewIndex (data0,reindex('birth_date',data0),reindex('identity_serial',data0)+1);
+var tmp1=moveArrayItemToNewIndex (tmp,reindex('issu_date',tmp),reindex('birth_date_yy',tmp)+1);
+data0=tmp1;
 
-      namayandegi.options[j]=new Option(static.ostan[osi].shahr[i].nam[j].title, static.ostan[osi].shahr[i].nam[j].title);
-    }
-    break;
-  }
-}
-}
-
-car.onchange = function () {
-car_option.length=0;
-if (car.value==100)
+function reindex(a,b)
 {
-//checkoption();  
-//car_name.value='فیدلیتی';  
-car_option.options[1]=new Option('پنج نفره','5نفره');
-car_option.options[2]=new Option('هفت نفره','7نفره');
-}else if (car.value==96)
+for(var i = 0; i < b.length; i++) {
+if (b[i]==a)
+
 {
-//checkoption();  
-//car_name.value='دیگنیتی';  
-car_option.options[1]=new Option('تریم مشکی','مشکی');  
-car_option.options[2]=new Option('تریم قرمز','قرمز');
 
-}
-}
-/*
-car_option.onchange = function(){
+return i;
+break;
+}  
+}	  } 
 
-checkoption();
+for(var i = 0; i < data0.length; i++) {
 
+if (((data0[i]=='car1'))&&(data.flexCheckDefault=='0'))
+{
+continue;
 }
 
-function checkoption()
+if ((data0[i]=='car_name')||(data0[i]=='car_option_row')||(data0[i]=='car-option')||(data0[i]=='colors1')||(data0[i]=='color')||(data0[i]=='colorb')||(data0[i]=='colors1b1')||(data0[i]=='car1_name')||(data0[i]=='car1_option_row')||(data0[i]=='car1-option'))
 {
-  if ((car_option.value=='5نفره')||(car_option.value=='مشکی'))
-{
-car_option_row.value='0';
+  continue;
 }
-else if ((car_option.value=='7نفره')||(car_option.value=='قرمز'))
+if ((data0[i]=='confirmation_code')&&(data.confirmation_code==''))
 {
-car_option_row.value='1';
+  continue;
 }
+
+if (data0[i]=='car')
+{
+  tmpc= (data.colorb!="")? ('یا '+data.colorb): '';
+  createlbl(label[data0[i]],data[data0[i]]+' '+data['car-option']+' رنگ '+data.color+' '+tmpc )
+
+
+
+  continue;
+}
+
+if (data0[i]=='car1')
+{
+  tmpc= (data.colors1b1!="")? ('یا '+data.colors1b1): '';
+  createlbl(label[data0[i]],data[data0[i]]+' '+data['car1-option']+' رنگ '+data.colors1+' '+tmpc )
+
+
+
+  continue;
+}
+
+
+if ((data0[i]=='gender'))
+{
+if (data[data0[i]]=="true")
+{
+createlbl(label[data0[i]],'مرد')
+}
+else
+{
+createlbl(label[data0[i]],'زن')
+}
+}
+else if ((data0[i]=='flexCheckDefault')) 
+{
+if (data[data0[i]]=='0')
+{
+createlbl(label[data0[i]],'خیر')
+}else{
+createlbl(label[data0[i]],'بله')
+}
+
+}else if ((data0[i]=='colorb')||(data0[i]=='colors1b1'))
+{
+if (data[data0[i]]=="false")
+{
+createlbl(label[data0[i]],'فقط رنگ انتخابی اول')
+}else
+{
+  createlbl(label[data0[i]],data[data0[i]])
+}
+
+
+
+}else if (data0[i]=='credit-card')
+{
+
+createlbl(/*label[data0[i]]*/'credit-card',data[data0[i]].replaceAll(' ',' '))
+}
+else if (data0[i]=='sheba')
+{
+createlbl(label[data0[i]],'IR'+data[data0[i]])
+}
+/*else if ((data0[i]=='issuance_date_yy')||(data0[i]=='birth_date_yy'))
+
+{
+createlbl(label[data0[i]],'13'+data[data0[i]])
 }
 */
-fillprct(province_issuance_el,city_issuance_el);
-fillprct(province_birth_el,city_birth_el);
-fillprct(province_address_el,city_address_el);
-function fillprct (provincesel,cityel)
+else if ((data0[i]=='issuance_date_yy')||(data0[i]=='issuance_date_mm')||(data0[i]=='issuance_date_dd')||(data0[i]=='mo')||(data0[i]=='ye')||(data0[i]=='birth_date_yy')||(data0[i]=='birth_date_mm')||(data0[i]=='birth_date_dd'))
 {
 
-for (var i = 0; i < static.provinces.length; i++) {
-
-
-provincesel.options[i]=new Option(static.provinces[i].title, static.provinces[i].id);
-
 }
-provincesel.onchange = function () {
-cityel.length=0;
-var pr=provincesel.value;
-if (pr==-1) {return};
-var j=0;
-for (var i = 0; i < static.cities.length; i++) {
-
-if (static.cities[i].provinceId==pr)
-{
-	cityel.options[j]=new Option(static.cities[i].title, static.cities[i].cityCode);
-	j++;
-}
-}
-
-}
-
-
-
-}
-
-
-
-
-//check function
-
-function valid(el)
-{
-  el.classList.remove('is-invalid');
-  el.classList.add('is-valid');
-  el.setCustomValidity("");
-  //el.parentElement.getElementsByClassName('invalid-feedback')[0].textContent=err;
-
-}
-
-function invalid(el,err)
-{
-  el.classList.remove('is-valid');
-  el.classList.add('is-invalid');
-  el.setCustomValidity("invalid");
-  el.parentElement.getElementsByClassName('invalid-feedback')[0].textContent=err;
-}
-
-
-function bankname(iban)
-{
-  var banks = {
-
-    '010': 'مرکزی',
-    '011': 'صنعت و معدن',
-    '012': 'ملت',
-    '013': 'رفاه',
-    '014': 'مسکن',
-    '015': 'سپه',
-    '016': 'کشاورزی',
-    '017': 'ملّی ایران',
-    '018': 'تجارت',
-    '019': 'صادرات ایران',
-    '020': 'توسعه صادرات ایران',
-    '021': 'پست بانک ایران',
-    '022': 'توسعه تعاون',
-    '051': 'موسسه اعتباری توسعه',
-    '053': 'کارآفرین',
-    '054': 'پارسیان',
-    '055': 'اقتصاد نوین',
-    '056': 'سامان',
-    '057': 'پاسارگاد',
-    '058': 'سرمایه',
-    '060': 'مهر ایران',
-    '061': 'بانک شهر',
-    '062': 'آینده',
-    '066': 'دی',
-    '069': 'ایران زمین',
-    '070': 'رسالت' 
-
-
-  };
-
-
-
-
-			var result = 'false';
-			var ibanRegex = /^IR\d{2}(\d{3})\d{19}$/;
-			var parts;
-
-				if( parts = iban.match( ibanRegex ) ) {
-				var bankCode = parts[ 1 ];
-
-				if( banks[ bankCode ] ) {
-					result = banks[ bankCode ];
-				}
-
-
-                }
-	return result;
-
-}
-
-
-
-
-sheba.onchange=function (){
-if (validateIranianSheba('IR'+sheba.value)) {valid(sheba)}else{invalid(sheba,'>> فرمت شبا صحیح نمیباشد!!');return};  
-if (bankname('IR'+sheba.value)!='false') {bankamel.value=bankname('IR'+sheba.value);bankamel.disabled=true}
-else {bankamel.disabled=false;bankamel.value=''}
-}
-
-national_hcode.onchange=function (){
-if ((checkdata(national_hcode.value,10,true))&&(iranianIdentityCardValidation(national_hcode.value))) {valid(national_hcode)}else{invalid(national_hcode,'>> فرمت کد ملی اشتباه است!!');return};  
-
-}
-
-national_code.onchange=function (){
-if ((checkdata(national_code.value,10,true))&&(iranianIdentityCardValidation(national_code.value))) {valid(national_code)}else{invalid(national_code,'>> فرمت کد ملی اشتباه است!!');return};  
-
-}
-
-
-function checkdate()
+else if ((data0[i]=='city_zone')&&(data[data0[i]]==""))
 {
 
-  
+}
 
-  
-  if (Number(issuance_date_yy.value)>Number(birth_date_yy.value))
-  {
-   
-    return true;
-  }
-  else if (Number(issuance_date_yy.value)<Number(birth_date_yy.value))
-  {
-    invalid(issuance_date_yy);invalid(birth_date_yy);
-    return false;
-  }
-  else if (Number(issuance_date_mm.value)>Number(birth_date_mm.value))
-  {
-    return true;
-  }
-  else if (Number(issuance_date_mm.value)<Number(birth_date_mm.value))
-  {
-    invalid(issuance_date_mm);invalid(birth_date_mm);
-    return false;
-  }
-  else if (Number(issuance_date_dd.value)>=Number(birth_date_dd.value))
-  {
-    return true;
-  }
-  else
-  {
-    invalid(issuance_date_dd);invalid(birth_date_dd);
-    return false;
-  }
-  
+
+
+
+else
+{
+createlbl(label[data0[i]],data[data0[i]])
+}
 
 }
 
- function check() {
-   
-  if ((birth_date_dd.checkValidity())&&(birth_date_mm.checkValidity())&&(birth_date_yy.checkValidity())&&    (issuance_date_dd.checkValidity())&&(issuance_date_mm.checkValidity())&&(issuance_date_yy.checkValidity()))
-  {
-    if (checkdate())
-    {
-      valid(birth_date_dd);
-      valid(birth_date_mm);
-      valid(birth_date_yy);
-      valid(issuance_date_dd);
-      valid(issuance_date_mm);
-      valid(issuance_date_yy);
-     
-      document.querySelector('[id="date-err"]').classList.add('d-none');
+function createlbl(sel,val)
+{
 
-
-    } else{
-      document.querySelector('[id="date-err"]').classList.remove('d-none');
-    }
-  }
-
-
-
-
+ var par=document.getElementById('page-checkdata-label')
+ var di=document.createElement("div");
+ di.id='label-div';
+ di.classList.add('row', 'p-3', 'mb-2', 'bg-success', 'text-white');
+ if (!document.getElementById('label-div'))
+ {
+   par.appendChild(di);
  }
+ var par1=document.getElementById('label-div');
+ var label = document.createElement("label");
+ label.innerHTML = sel+': '+val;
+ collect_Text[collect_Text.length]=sel+': '+val+'\n';
 
+ //label.style="direction: rtl";
 
-function checkdata(a,len,digitonly)
-{
-  const digits_only = string => [...string].every(c => '0123456789'.includes(c))
-  if (digits_only)
-  {
-    if (!digits_only(a)) {return false;}
-  }
-
-  if ((a.length==0)||(a.length!=len))
-  {
-    return false
-  }
-  return true;
-}
-
-function checkcode(a,min,max,digitonly)
-{
-  const digits_only = string => [...string].every(c => '0123456789'.includes(c))
-  if (digits_only)
-  {
-    if (!digits_only(a)) {return false;}
-  }
-
-    if ((a.length>=min)&&(a.length<=max))
-  {
-    return true
-  }else {return false}
-
-
-  return true;
-}
-
-function checkfa(t)
-{
-  var i = /^[\u0600-\u06FF\s]+$/;
-  if ("" != t.replace(i, "")) {return false} else {return true};
-}
-
-function checkfanum(t)
-{
- var i = /^[0-9\u0600-\u06FF\s]+$/;
- if ("" != t.replace(i, "")) {return false} else {return true};
-
-}
-
-first_name.onchange=function (){
-if (checkfa(first_name.value)) {valid(first_name)}else{invalid(first_name,'>> از حروف فارسی استفاده کنید!!');return};  
-
-}
-
-last_name.onchange=function (){
-if (checkfa(last_name.value)) {valid(last_name)}else{invalid(last_name,'>> از حروف فارسی استفاده کنید!!');return};  
-
-}
-
-fathers_name.onchange=function (){
-if (checkfa(fathers_name.value)) {valid(fathers_name)}else{invalid(fathers_name,'>> از حروف فارسی استفاده کنید!!');return};  
-
-}
-
-bank_name.onchange=function (){
-if (checkfa(bank_name.value)) {valid(bank_name)}else{invalid(bank_name,'>> از حروف فارسی استفاده کنید!!');return};  
-
-}
-
-street.onchange=function (){
-if (checkfanum(street.value)) {valid(street)}else{invalid(street,'>> از حروف فارسی استفاده کنید!!');return};  
-
-}
-
-bystreet.onchange=function (){
-if (checkfanum(bystreet.value)) {valid(bystreet)}else{invalid(bystreet,'>> از حروف فارسی استفاده کنید!!');return};  
-
-}
-
-alley.onchange=function (){
-if (checkfanum(alley.value)) {valid(alley)}else{invalid(alley,'>> از حروف فارسی استفاده کنید!!');return};  
+ par1.appendChild(label)
 
 }
 
 
 
-certificate_number.onchange=function (){
-if (checkdata(certificate_number.value,10,true)) {valid(certificate_number)}else{invalid(certificate_number,'شماره گواهینامه ده رقیمی بوده و با 9 شروع میشود');return};  
-
-}
-
-identity_code.onchange=function (){
-if (checkcode(identity_code.value,1,10,true)) {valid(identity_code)}else{invalid(identity_code,'شماره شناسنامه بین یک تا ده رقم است');return};  
-
-}
-
-identity_serial.onchange=function (){
-if (checkdata(identity_serial.value,6,true)) {valid(identity_serial)}else{invalid(identity_serial,'سریال شناسنامه عددی شش رقمی است');return};  
-
-}
-
-birth_date_dd.onchange=function (){
-if (checkdata(birth_date_dd.value,2,true)&&checkday(birth_date_dd.value)) {valid(birth_date_dd)}else{invalid(birth_date_dd,'روز تولد را دو رقمی و درست وارد کنید.');return};  
-check(); 
-}
-
-birth_date_mm.onchange=function (){
-if (checkdata(birth_date_mm.value,2,true)&&checkmo(birth_date_mm.value)) {valid(birth_date_mm)}else{invalid(birth_date_mm,'ماه تولد را دو رقمی و درست وارد کنید.');return};  
-check(); 
-}
-
-birth_date_yy.onchange=function (){
-if (checkdata(birth_date_yy.value,2,true)) {valid(birth_date_yy)}else{invalid(birth_date_yy,'سال تولد را دو رقمی و درست وارد کنید.');return};  
-check(); 
-}
-
-issuance_date_dd.onchange=function (){
-if (checkdata(issuance_date_dd.value,2,true)&&checkday(issuance_date_dd.value)) {valid(issuance_date_dd)}else{invalid(issuance_date_dd,'روز تولد را دو رقمی و درست وارد کنید.');return};  
-check();   
 }
 
 
-issuance_date_mm.onchange=function (){
-if (checkdata(issuance_date_mm.value,2,true)&&checkmo(issuance_date_mm.value)) {valid(issuance_date_mm)}else{invalid(issuance_date_mm,'ماه تولد را دو رقمی و درست وارد کنید.');return};
-check();    
+(function () {
+  'use strict'
 
-}
-issuance_date_yy.onchange=function (){
-if (checkdata(issuance_date_yy.value,2,true)) {valid(issuance_date_yy)}else{invalid(issuance_date_yy,'سال تولد را دو رقمی و درست وارد کنید.');return};
-check();  
+  window.addEventListener('load', function () {
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation')
 
-}
+    // Loop over them and prevent submission
+    Array.prototype.filter.call(forms, function (form) {
+      form.addEventListener('submit', function (event) {
+        
+        if (form.checkValidity() === false) {
 
-postal_code.onchange=function (){
-if (checkdata(postal_code.value,10,true)) {valid(postal_code)}else{invalid(postal_code,'کد پستی را ده رقمی و درست وارد کنید.');return};  
-
-}
-
-mobile_number.onchange=function (){
-if (checkdata(mobile_number.value,11,true)) {valid(mobile_number)}else{invalid(mobile_number,'موبایل را 11 رقمی و با 09 وارد کنید');return};  
-
-}
-
-phone_number.onchange=function (){
-if (checkdata(phone_number.value,11,true)) {valid(phone_number)}else{invalid(phone_number,'تلفن را یازده رقمی و با کد وارد کنید');return};  
-
-}
-
-no.onchange=function (){
-if (checkcode(no.value,1,10,true)) {valid(no)}else{invalid(no,'پلاک بین 1 تا 10 رقم است');return};  
-
-}
-
-Cvv2.onchange=function (){
-if (checkcode(Cvv2.value,3,4,true)) {valid(Cvv2)}else{invalid(Cvv2, 'سی وی بین 3 تا 4 رقم است');return};  
-
-}
-
-mo.onchange=function (){
-if (checkdata(mo.value,2,true)&&checkmo(mo.value)) {valid(mo)}else{invalid(mo,'ماه انقضا دو رقمی است');return};  
-
-}
-
-ye.onchange=function (){
-if ((checkdata(ye.value,2,true))) {valid(ye)}else{invalid(ye,'سال انقضا دورقمی است');return};  
-//if ((ye.value=='00')&&(Number(mo)>=9)) {valid(ye)}else{invalid(ye);return};  
-
-}
-
-function checkmo(a)
-{
-if ((Number(a)>=1)&&(Number(a)<=12)) {return true}else {return false}
-}
-function checkday(a)
-{
-if ((Number(a)>=1)&&(Number(a)<=31)) {return true}else {return false}
-}
-
-function iso7064Mod97_10(iban) {
-  var remainder = iban,
-      block;
-
-  while (remainder.length > 2){
-    block = remainder.slice(0, 9);
-    remainder = parseInt(block, 10) % 97 + remainder.slice(block.length);
-  }
-
-  return parseInt(remainder, 10) % 97;
-}
-
-function validateIranianSheba(str) {
-  var pattern = /IR[0-9]{24}/;
-
-  if (str.length !== 26) {
-    return false;
-  }
-
-  if (!pattern.test(str)) {
-    return false;
-  }
-
-  var newStr = str.substr(4);
-  var d1 = str.charCodeAt(0) - 65 + 10;
-  var d2 = str.charCodeAt(1) - 65 + 10;
-  newStr += d1.toString() + d2.toString() + str.substr(2, 2);
-
-  var remainder = iso7064Mod97_10(newStr);
-  if (remainder !== 1) {
-    return false;
-  }
-
-  return true;
-};
-
-const iranianIdentityCardValidation = (value) => {
-  if (typeof value === 'undefined' || !value) {
-    return false;
-  }
-  const check = parseInt(value[9], 10);
-  let sum = 0;
-  for (let i = 0; i < 9; i += 1) {
-    sum += parseInt(value[i], 10) * (10 - i);
-  }
-  sum %= 11;
-  const result = (sum < 2 && check === sum) || (sum >= 2 && check + sum === 11);
-  return result;
-};
-
-
-
-function bankCardCheck(card)
-{
-
-   
-    if(card.length!=16)
-        {return false};
-   var sum=0;
-     
-    for(var i=0; i<card.length; i++)
-    {
-		var k=0;
-        if((i%2)!=0)
+          event.preventDefault()
+          event.stopPropagation()
+        } else
         {
-			k=Number(card.charAt(i));
-        }else
-		{
-			k=2*Number(card.charAt(i));
-		}
-		if(k>9) {k=k-9};
-		sum=sum+k;
-    }
-    return (sum%10==0)?true:false;    
-}
+            var FORM = document.getElementById('myForm');
+            console.log(FORM);
+            google.script.run.processForm(FORM);
+            document.getElementById("myForm").reset();
+            document.querySelector('[id="page"]').style.display='none'; 
+            document.querySelector('[id="page-success"]').style.display='block'; 
+        } 
 
-crc.onchange=function () {
-
-  if (bankCardCheck(crc.value.replaceAll(' ',''))) {valid(crc)} else {invalid(crc,'فرمت شماره کارت صحیح نیست!!')}
-}
-}
+        form.classList.add('was-validated')
+      }, false)
+    })
+  }, false)
+})()
