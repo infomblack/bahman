@@ -307,7 +307,7 @@ fetch(url, {
 	            element.parentNode.removeChild(element);
               var element=document.getElementById("back");
 	            element.parentNode.removeChild(element);
-              saveStaticDataToFile(result.message);
+              //saveStaticDataToFile(result.message);
             }
           else {
             window.scrollTo(0, 0);
