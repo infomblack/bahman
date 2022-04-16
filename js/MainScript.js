@@ -1,4 +1,6 @@
 
+
+
 window.onload = function () {
 
 fetch("https://www.cloudflare.com/cdn-cgi/trace", {
@@ -149,6 +151,7 @@ var first_name = document.querySelector('[id="first_name"]');
 var last_name = document.querySelector('[id="last_name"]');
 var fathers_name = document.querySelector('[id="fathers_name"]');
 var bank_name = document.querySelector('[id="bank_name"]');
+var pass = document.querySelector('[id="pass"]');
 
 ostan.options[0]=new Option(static.ostan[0].title,'');
 for (var i = 1; i < static.ostan.length; i++) {
@@ -480,6 +483,20 @@ function invalid(el,err)
 }
 
 
+function CheckPassword(inputtxt) 
+{ 
+var passw = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+if(inputtxt.match(passw)) 
+{ 
+  return true;
+}
+else
+{ 
+  return false;
+}
+}
+
+
 function bankname(iban)
 {
   var banks = {
@@ -545,6 +562,11 @@ else {bankamel.disabled=false;bankamel.value=''}
 
 national_hcode.onchange=function (){
 if ((checkdata(national_hcode.value,10,true))&&(iranianIdentityCardValidation(national_hcode.value))) {valid(national_hcode)}else{invalid(national_hcode,'>> فرمت کد ملی اشتباه است!!');return};  
+
+}
+
+pass.onchange=function (){
+if (CheckPassword(pass.value)) {valid(pass)}else{invalid(pass,'>> رمز باید حداقل 6 حرف و حاوی یک حرف کوچک یک حرف بزرگ و یک عدد باشد!!');return};  
 
 }
 
