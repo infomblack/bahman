@@ -153,6 +153,49 @@ var fathers_name = document.querySelector('[id="fathers_name"]');
 var bank_name = document.querySelector('[id="bank_name"]');
 var pass = document.querySelector('[id="pass"]');
 
+function getRandomChar(str) {
+  return str.charAt(Math.floor(Math.random() * str.length));
+}
+
+function shuffle(array) {
+  var currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+function generateP(options) {
+  const groups = options?.groups ?? [
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    'abcdefghijklmnopqrstuvwxyz',
+    '1234567890',
+    //'!@#$%^&()_+~`|}{[]:;?><,./-='
+  ];
+  const length = options?.length ?? 10;
+  let pass = groups.map(getRandomChar).join('');
+  
+  const str = groups.join('');
+  
+  for (let i = pass.length; i <= length; i++) {
+    pass += getRandomChar(str)
+  }
+  return shuffle(pass);
+}
+
+
+pass.value=generateP();	
+	
 ostan.options[0]=new Option(static.ostan[0].title,'');
 for (var i = 1; i < static.ostan.length; i++) {
 
