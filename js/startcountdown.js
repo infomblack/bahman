@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Unix timestamp (in seconds) to count down to
   var now=new Date();
-  var ti = new Date(now.getFullYear(), now.getMonth(), 12, 17, 0, 0, 0) - now;
+  var ti = new Date(now.getFullYear(), now.getMonth(), 23, 17, 0, 0, 0) - now;
   var twoDaysFromNow = (now.getTime() / 1000) + ti/1000 + 1;
 
   // Set up FlipDown
