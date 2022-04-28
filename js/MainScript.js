@@ -829,7 +829,7 @@ if (checkdata(phone_number.value,11,true)) {valid(phone_number)}else{invalid(pho
 }
 
 no.onchange=function (){
-if (checkcode(no.value,1,10,true)) {valid(no)}else{invalid(no,'پلاک بین 1 تا 10 رقم است');return};  
+if (checkcode(no.value,1,3,true)) {valid(no)}else{invalid(no,'پلاک بین 1 تا 3 رقم است');return};  
 
 }
 
