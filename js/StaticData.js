@@ -339,7 +339,7 @@ var static=
         },
           {
             "id": 22,
-            "title": "'گلستان'",
+            "title": "گلستان",
             "shahr":
             [
                 {
